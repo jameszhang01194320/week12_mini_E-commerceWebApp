@@ -9,20 +9,21 @@ function ProductsList() {
   const [showAllDetails, setShowAllDetails] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedProduct, setEditedProduct] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
-  const fetchProducts = () => {
-    axios
-     .get("http://127.0.0.1:5000/products")
-     .then((response) => {
-        setProducts(response.data);
-      })
-     .catch((error) => {
-        console.error("Error fetching products:", error);
-      });
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:5000/products");
+      setProducts(response.data);
+      setErrorMessage(null);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setErrorMessage("Error fetching products. Please try again later.");
+    }
   };
 
   const selectProduct = (productId) => {
@@ -35,15 +36,14 @@ function ProductsList() {
     setShowAllDetails((prevShowAllDetails) =>!prevShowAllDetails);
   };
 
-  const deleteProduct = (productId) => {
-    axios
-     .delete(`http://127.0.0.1:5000/products/${productId}`)
-     .then(() => {
-        fetchProducts();
-      })
-     .catch((error) => {
-        console.error("Error deleting product", error);
-      });
+  const deleteProduct = async (productId) => {
+    try {
+      await axios.delete(`http://127.0.0.1:5000/products/${productId}`);
+      fetchProducts();
+    } catch (error) {
+      console.error("Error deleting product", error);
+      setErrorMessage("Error deleting product. Please try again.");
+    }
   };
 
   const startEditing = (product) => {
@@ -51,20 +51,25 @@ function ProductsList() {
     setEditedProduct(product);
   };
 
-  const saveEditedProduct = () => {
-    axios
-     .put(`http://127.0.0.1:5000/products/${editedProduct.id}`, editedProduct)
-     .then(() => {
-        setIsEditing(false);
-        fetchProducts();
-      })
-     .catch((error) => {
-        console.error("Error saving edited product", error);
-      });
+  const saveEditedProduct = async () => {
+    try {
+      await axios.put(
+        `http://127.0.0.1:5000/products/${editedProduct.id}`,
+        editedProduct
+      );
+      setIsEditing(false);
+      fetchProducts();
+    } catch (error) {
+      console.error("Error saving edited product", error);
+      setErrorMessage(
+        "Error saving edited product. Please check your changes and try again."
+      );
+    }
   };
 
   return (
     <Container className="mt-5">
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
       <h3>Products</h3>
       <button onClick={toggleView}>
         {showAllDetails? "Show Only Names" : "Show All Details"}
@@ -86,9 +91,21 @@ function ProductsList() {
               className={index % 2 === 0? "even-row" : "odd-row"}
             >
               <td>{product.name}</td>
-              <td>{showAllDetails || selectedProductId === product.id? product.description : null}</td>
-              <td>${showAllDetails || selectedProductId === product.id? product.price : null}</td>
-              <td>Stock: {showAllDetails || selectedProductId === product.id? product.stock_quantity : null}</td>
+              <td>
+                {showAllDetails || selectedProductId === product.id
+                 ? product.description
+                  : null}
+              </td>
+              <td>
+                {showAllDetails || selectedProductId === product.id
+                 ? `$${product.price}`
+                  : null}
+              </td>
+              <td>
+                Stock: {showAllDetails || selectedProductId === product.id
+                 ? product.stock_quantity
+                  : null}
+              </td>
               <td>
                 {!isEditing || editedProduct.id!== product.id? (
                   <>
@@ -151,7 +168,10 @@ function ProductsList() {
                         })
                       }
                     />
-                    <button className="btn btn-secondary" onClick={saveEditedProduct}>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={saveEditedProduct}
+                    >
                       Submit
                     </button>
                   </>

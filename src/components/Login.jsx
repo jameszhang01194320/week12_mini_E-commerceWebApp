@@ -13,7 +13,7 @@ const Login = ({ onLogin }) => {
 
   const handleChange = (e) => {
     setInputs({
-      ...inputs,
+     ...inputs,
       [e.target.name]: e.target.value
     });
   };
@@ -21,12 +21,18 @@ const Login = ({ onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // 这里模拟登录成功
-      await axios.post('http://127.0.0.1:5000/login', inputs); 
-      onLogin(); // 更新登录状态
-      navigate('/'); // 登录成功后重定向到主页
+      const response = await axios.post('http://127.0.0.1:5000/login', inputs);
+      // 假设后端返回的登录成功信息可以用来更新登录状态
+      onLogin(response.data); 
+      navigate('/'); 
     } catch (err) {
-      setError(err.response?.data || 'Something went wrong');
+      if (err.response && err.response.status === 401) {
+        setError('Invalid email or password.');
+      } else if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message);
+      } else {
+        setError('Something went wrong. Please try again later.');
+      }
     }
   };
 
@@ -60,7 +66,7 @@ const Login = ({ onLogin }) => {
           Login
         </Button>
       </Form>
-      {error && <Alert variant="danger" className="mt-3">{JSON.stringify(error)}</Alert>}
+      {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
     </Container>
   );
 };

@@ -1,61 +1,62 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Container, Button } from "react-bootstrap"; // 引入 Container 和 Button 组件
-import "../App.css"; // 确保路径正确的导入
+import { Container, Button } from "react-bootstrap";
+import "../App.css";
 
 function CustomerList() {
   const [customers, setCustomers] = useState([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
   const [showAllDetails, setShowAllDetails] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     fetchCustomers();
   }, []);
 
-  const fetchCustomers = () => {
-    axios
-      .get("http://127.0.0.1:5000/customers")
-      .then((response) => {
-        setCustomers(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
+  const fetchCustomers = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:5000/customers");
+      setCustomers(response.data);
+      setErrorMessage(null);
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+      setErrorMessage("Error fetching customers. Please try again later.");
+    }
   };
 
   const selectCustomer = (customerId) => {
     setSelectedCustomerId((prevSelectedCustomerId) =>
-      prevSelectedCustomerId === customerId ? null : customerId
+      prevSelectedCustomerId === customerId? null : customerId
     );
   };
 
   const toggleView = () => {
-    setShowAllDetails((prevShowAllDetails) => !prevShowAllDetails);
+    setShowAllDetails((prevShowAllDetails) =>!prevShowAllDetails);
   };
 
-  const deleteCustomer = (customerId) => {
-    axios
-      .delete(`http://127.0.0.1:5000/customers/${customerId}`)
-      .then(() => {
-        fetchCustomers();
-      })
-      .catch((error) => {
-        console.error("Error deleting customer", error);
-      });
+  const deleteCustomer = async (customerId) => {
+    try {
+      await axios.delete(`http://127.0.0.1:5000/customers/${customerId}`);
+      fetchCustomers();
+    } catch (error) {
+      console.error("Error deleting customer", error);
+      setErrorMessage("Error deleting customer. Please try again.");
+    }
   };
 
   return (
-    <Container className="mt-5"> {/* 使用 Container 包裹内容 */}
+    <Container className="mt-5">
+      {errorMessage && <div className="error-message">{errorMessage}</div>}
       <h3>Customers</h3>
       <button onClick={toggleView}>
-        {showAllDetails ? "Show Only Names" : "Show All Details"}
+        {showAllDetails? "Show Only Names" : "Show All Details"}
       </button>
       <ul>
         {customers.map((customer) => (
           <li key={customer.id} onClick={() => selectCustomer(customer.id)}>
-             <b className="clickable">{customer.name}</b> {/* 添加 clickable 类 */}
+            <b className="clickable">{customer.name}</b>
             <br />
-            {showAllDetails || selectedCustomerId === customer.id ? (
+            {showAllDetails || selectedCustomerId === customer.id? (
               <>
                 {customer.email}
                 <br />
@@ -64,12 +65,12 @@ function CustomerList() {
               </>
             ) : null}
             <Button
-              variant="warning"  // 使用 Bootstrap 的 'danger' 变体（红色按钮）
+              variant="warning"
               onClick={(e) => {
                 e.stopPropagation();
                 deleteCustomer(customer.id);
               }}
-              className="custom-delete-button" // 使用自定义样式
+              className="custom-delete-button"
             >
               Delete
             </Button>
