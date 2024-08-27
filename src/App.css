@@ -1,0 +1,104 @@
+/* Styles for the navigation bar */
+body {
+  background-color: #d6b547;
+  margin: 10px;;
+  padding:0;
+}
+
+nav {
+  background-color: #ED1D24;
+  overflow: hidden;
+}
+
+/* Navigation link styles */
+nav a {
+  float: left;
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* Change the color of links on hover */
+nav a:hover {
+  background-color: rgb(220, 146, 146);
+}
+
+/* Style for the currently active link */
+nav a.active {
+  background-color: gray;
+  color: white;
+}
+
+/* Clear floats */
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.comic, .character {
+  margin: 20px;
+  text-align: center;
+}
+
+.customer-list li {
+    cursor: pointer;
+}
+
+
+.active {
+  color: red; /* 您可以根据需要定义样式 */
+  font-weight: bold;
+}
+
+
+/* App.css */
+.custom-delete-button {
+  background-color: blue; /* 自定义按钮背景颜色为蓝色 */
+  color: white; /* 按钮文本颜色 */
+  border: none;
+  border-radius: 3px;
+  padding: 5px 10px;
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+.custom-delete-button:hover {
+  background-color: darkblue; /* 鼠标悬停时的背景颜色 */
+}
+
+.customer-list li {
+  cursor: pointer;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.customer-list h3 {
+  margin-bottom: 20px;
+}
+
+
+/* App.css */
+.clickable {
+  cursor: pointer;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-5 {
+  margin-top: 3rem;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
+}
