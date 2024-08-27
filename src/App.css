@@ -25,6 +25,13 @@ nav a:hover {
   background-color: rgb(220, 146, 146);
 }
 
+
+
+@media (max-width: 768px) {
+  .your-element-class {
+     max-width: 400px;
+   }
+ }
 /* Style for the currently active link */
 nav a.active {
   background-color: gray;
@@ -101,4 +108,17 @@ nav a.active {
 
 .ml-2 {
   margin-left: 0.5rem;
+}
+
+.custom-delete-button,
+button[onClick*="startEditing"] {
+  background-color: lightgray;
+}
+
+.even-row {
+  background-color: #2f2626;
+}
+
+.odd-row {
+  background-color: #ffffff;
 }
